@@ -1,0 +1,11 @@
+[package]
+name = "mockingbird"
+version = "0.1.0"
+description = "Simple ecs-integrated replication for bevy"
+edition = "2021"
+resolver = "2"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = { git = "https://github.com/bevyengine/bevy", branch = "main" }
