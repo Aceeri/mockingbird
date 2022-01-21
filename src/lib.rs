@@ -97,9 +97,10 @@ mod test {
 
     #[test]
     fn encode_test() {
-        //let mut tests = vec![Test(5), Test(180), Test(3812)];
         let mut tests = Vec::new();
-        for i in 0..(32 * 90) {
+        let amount: u32 = 1_000;
+        let size = std::mem::size_of::<Test>() * amount as usize;
+        for i in 0..amount {
             tests.push(Test(i));
         }
 
@@ -135,6 +136,12 @@ mod test {
         //encoder.read_to_end(delta_updated.as_slice()).unwrap();
         encoder.flush().unwrap();
         let buffer = encoder.finish().unwrap();
+
+        let buffer = zstd::block::compress(&encode.as_slice(), 0).unwrap();
+        let bytes = zstd::block::decompress(&buffer.as_slice(), size).unwrap();
+
+        println!("{:?}", &bytes);
+        assert_eq!(encode, encode);
 
         println!("{:?}", &buffer);
         println!("compressed len: {:?}", buffer.len());
