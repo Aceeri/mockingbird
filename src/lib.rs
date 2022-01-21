@@ -128,16 +128,17 @@ mod test {
         let applied = xor(encoded.iter(), delta_updated.iter());
         println!("applied: {:?}", applied);
 
+        let encode = delta;
         let buf = Vec::new();
         let mut encoder = ZlibEncoder::new(buf, Compression::fast());
-        encoder.write_all(&encoded3.as_slice()).unwrap();
+        encoder.write_all(&encode.as_slice()).unwrap();
         //encoder.read_to_end(delta_updated.as_slice()).unwrap();
         encoder.flush().unwrap();
         let buffer = encoder.finish().unwrap();
 
         println!("{:?}", &buffer);
         println!("compressed len: {:?}", buffer.len());
-        println!("uncompressed len: {:?}", encoded3.len());
-        println!("compression ratio: {:?}", buffer.len() as f64 / encoded3.len() as f64);
+        println!("uncompressed len: {:?}", encode.len());
+        println!("compression ratio: {:?}", buffer.len() as f64 / encode.len() as f64);
     }
 }

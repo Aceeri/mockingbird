@@ -12,3 +12,11 @@ bevy = { git = "https://github.com/bevyengine/bevy", branch = "main" }
 bincode = { git = "https://github.com/bincode-org/bincode", branch = "trunk" }
 bitpacking = "0.8.4"
 flate2 = "1.0"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "zlib_encode"
+path = "benches/compression.rs"
+harness = false
