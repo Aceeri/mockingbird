@@ -1,21 +1,22 @@
-
 use criterion::{criterion_group, criterion_main, Criterion};
 
+use bevy::prelude::*;
 use bincode::{config::Configuration, Decode, Encode};
 use bitpacking::{BitPacker, BitPacker1x};
-use flate2::write::ZlibEncoder;
 use flate2::read::ZlibDecoder;
+use flate2::write::ZlibEncoder;
 use flate2::Compression;
 use std::io;
-use std::io::BufReader;
 use std::io::prelude::*;
-use bevy::prelude::*;
-
+use std::io::BufReader;
 
 #[derive(Encode, Decode, Component, Debug, Clone)]
 pub struct Test(u32);
 
-fn xor<'a, 'b>(first: impl Iterator<Item = &'a u8>, second: impl Iterator<Item = &'b u8>) -> Vec<u8> {
+fn xor<'a, 'b>(
+    first: impl Iterator<Item = &'a u8>,
+    second: impl Iterator<Item = &'b u8>,
+) -> Vec<u8> {
     first.zip(second).map(|(f, s)| f ^ s).collect::<Vec<u8>>()
 }
 
@@ -25,7 +26,6 @@ fn as_u32<'a>(list: &'a Vec<u8>) -> &'a [u32] {
         u32s
     }
 }
-
 
 criterion_group!(benches, zlib, zstd);
 criterion_main!(benches);
@@ -57,7 +57,7 @@ fn zlib(criterion: &mut Criterion) {
     // apply delta
     let applied = xor(encoded.iter(), delta_updated.iter());
     let encode = delta_updated;
-    println!("{:?}", &encode);
+    //println!("{:?}", &encode);
 
     let buf = Vec::new();
     let mut encoder = ZlibEncoder::new(buf, Compression::fast());
@@ -69,7 +69,7 @@ fn zlib(criterion: &mut Criterion) {
     let mut bytes = Vec::new();
     decoder.read_to_end(&mut bytes).unwrap();
 
-    println!("{:?}", &bytes);
+    //println!("{:?}", &bytes);
     assert_eq!(bytes, encode);
 
     group.bench_function(format!("encode"), |bencher| {
@@ -99,8 +99,8 @@ fn zstd(criterion: &mut Criterion) {
     group.measurement_time(std::time::Duration::from_secs(4));
 
     let mut tests = Vec::new();
-    let amount: u32 = 1_000;
-    let size = std::mem::size_of::<Test>() * amount as usize;
+    let amount: u32 = 1_000_000;
+    let size = std::mem::size_of::<Test>() * (amount as usize * 2);
     for i in 0..amount {
         tests.push(Test(i));
     }
@@ -121,13 +121,13 @@ fn zstd(criterion: &mut Criterion) {
     let delta_updated = xor(delta.iter(), newest.iter());
     // apply delta
     let applied = xor(encoded.iter(), delta_updated.iter());
-    let encode = newest;
-    println!("{:?}", &encode);
+    let encode = delta_updated;
+    //println!("{:?}", &encode);
 
     let buffer = zstd::block::compress(&encode.as_slice(), 0).unwrap();
     let bytes = zstd::block::decompress(&buffer.as_slice(), size).unwrap();
 
-    println!("{:?}", &bytes);
+    //println!("{:?}", &bytes);
     assert_eq!(encode, encode);
 
     group.bench_function(format!("encode"), |bencher| {

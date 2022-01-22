@@ -2127,6 +2127,7 @@ dependencies = [
  "bitpacking",
  "criterion",
  "flate2",
+ "rand",
  "zstd",
 ]
 

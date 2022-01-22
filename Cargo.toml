@@ -16,6 +16,7 @@ zstd = "0.9.2+zstd.1.5.1"
 
 [dev-dependencies]
 criterion = "0.3"
+rand = "0.8.4"
 
 [[bench]]
 name = "zlib_encode"
