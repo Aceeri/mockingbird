@@ -16,37 +16,6 @@ pub mod prelude {
     pub use snapshot::*;
 }
 
-// Just an index for the client/server.
-#[derive(Debug, Clone)]
-pub struct PeerId(u8);
-
-// Who owns something.
-#[derive(Debug, Clone)]
-pub enum PeerOwnership {
-    Any,
-    Specific(PeerId),
-}
-// We own this entity, do not defer to anything sending updates for it.
-//
-// This should only be on entities in a server in a client <-> server model.
-#[derive(Component, Debug, Clone)]
-pub struct Own;
-
-// We are allowed to predict this entity moving/etc. but defer to any updates.
-#[derive(Component, Debug, Clone)]
-pub struct Predict(PeerOwnership);
-
-// Don't predict this at all, just defer to server.
-#[derive(Component, Debug, Clone)]
-pub struct Defer(PeerOwnership);
-
-fn record<C: Component + Replicate>(
-    mut history: ResMut<SnapshotHistory>,
-    components: Query<(Entity, &NetworkId, &C), Changed<C>>,
-) {
-    for (network_id, component) in components.iter() {}
-}
-
 #[cfg(test)]
 mod test {
     use super::*;

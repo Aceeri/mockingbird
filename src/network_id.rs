@@ -1,9 +1,11 @@
 use bevy::prelude::*;
+use bincode::{Encode, Decode};
+use fxhash::FxHashMap;
 
 // We probably need some sort of consensus stuff here if
 // we are doing peer to peer, but for now I'll just
 // assume we are a client <-> server model.
-#[derive(Component, Encode, Decode, Debug, Clone)]
+#[derive(PartialEq, Eq, Hash, Component, Encode, Decode, Debug, Clone)]
 pub struct NetworkId(u32);
 
 #[derive(Debug, Clone)]
@@ -14,7 +16,7 @@ impl NetworkIds {
         Self(1) // just skipping 1 for the sake of sanity checking
     }
 
-    pub fn create(&self) -> NetworkId {
+    pub fn create(&mut self) -> NetworkId {
         let id = NetworkId(self.0);
         self.0 = self
             .0
@@ -31,13 +33,15 @@ impl Default for NetworkIds {
 }
 
 // Local mapping for clients.
-#[derive(Default, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct NetworkMapping {
-    entities: HashMap<NetworkId, Entity>,
+    entities: FxHashMap<NetworkId, Entity>,
 }
 
 impl NetworkMapping {
     fn new() -> Self {
-        Self::default()
+        Self {
+            entities: FxHashMap::default()
+        }
     }
 }

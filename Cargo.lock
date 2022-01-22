@@ -2127,6 +2127,7 @@ dependencies = [
  "bitpacking",
  "criterion",
  "flate2",
+ "fxhash",
  "rand",
  "zstd",
 ]
